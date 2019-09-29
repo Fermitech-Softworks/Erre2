@@ -144,6 +144,29 @@ def login_or_redirect(f):
     return func
 
 
+# Error pages with cats
+
+
+@app.errorhandler(400)
+def page_400(_):
+    return render_template('error.htm', e=400), 400
+
+
+@app.errorhandler(403)
+def page_403(_):
+    return render_template('error.htm', e=403), 403
+
+
+@app.errorhandler(404)
+def page_404(_):
+    return render_template('error.htm', e=404), 404
+
+
+@app.errorhandler(500)
+def page_500(_):
+    return render_template('error.htm', e=500), 500
+
+
 # Pages for the guests
 
 
@@ -329,6 +352,19 @@ def func_delete_materia(cid):
     return redirect(url_for('page_administration'))
 
 
+@app.route("/edit_account", methods=['POST'])
+@login_or_403
+def func_edit_account():
+    utente = find_user(session['username'])
+    utente.nome = request.form.get("nome")
+    utente.cognome = request.form.get("cognome")
+    utente.email = request.form.get("email")
+    p = bytes(request.form.get("password"), encoding="utf-8")
+    utente.password = bcrypt.hashpw(p, bcrypt.gensalt())
+    db.session.commit()
+    return redirect(url_for("page_administration"))
+
+
 if __name__ == "__main__":
     # Aggiungi sempre le tabelle non esistenti al database, senza cancellare quelle vecchie
     db.create_all()
@@ -336,4 +372,4 @@ if __name__ == "__main__":
     if len(autore) == 0:
         db.session.add(nuovoutente)
         db.session.commit()
-    app.run(debug=True)
+    app.run()
