@@ -16,8 +16,7 @@
                     <thead>
                     <tr>
                         <th scope="col">Corso/Anno/Semestre</th>
-                        <th scope="col">Nome</th>
-                        <th scope="col">Docente
+                        <th scope="col">Nome - docente</th>
                         <th scope="col">Azioni</th>
                     </tr>
                     </thead>
@@ -25,8 +24,7 @@
                     {% for corso in materie %}
                     <tr>
                             <th> {{corso.ramo}}/{{corso.anno}}/{{corso.semestre}}</th>
-                            <th> {{corso.nome}}</th>
-                            <th> {{corso.docente}}</th>
+                            <th> {{corso.nome}} - {{corso.docente}}</th>
                             <th> <a href="/dashboard/course/{{corso.cid}}"> <i class="fas fa-binoculars"></i></a></th>
                     </tr>
                     {% endfor %}
