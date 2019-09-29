@@ -1,0 +1,38 @@
+<nav class="navbar navbar-dark bg-dark navbar-static-top">
+    <a class="navbar-brand" href="/">Erre2</a>
+    {% if utente %}
+    <a href="/" class="btn btn-danger">Logout</a>
+    {% else %}
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModalCenter">
+        Login
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Accesso a Erre2 - Admin</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-inline" action="/login" method="POST">
+                        <input class="form-control mr-sm-2" type="email" placeholder="Username" aria-label="username"
+                               name="username">
+                        <input class="form-control mr-sm-2" type="password" placeholder="Password" aria-label="password"
+                               name="password">
+                        <button class="btn btn-success my-2 my-sm-0" type="submit">Login</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Torna alla navigazione</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    {% endif %}
+</nav>

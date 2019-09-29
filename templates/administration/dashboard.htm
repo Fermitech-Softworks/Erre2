@@ -1,0 +1,73 @@
+{% extends "stampo.htm" %}
+{% block title %}Amministrazione{% endblock %}
+{% block content %}
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+           aria-selected="true">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
+           aria-selected="false">Profile</a>
+    </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+        <div class="row">
+            <div class="col-md-6">
+                <br>
+                <h3>Riassunti</h3>
+                <br>
+                <a href="/add_riassunto" type="button" class="btn btn-success btn-lg btn-block">Aggiungi un riassunto</a>
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Autore</th>
+                        <th scope="col">Azioni</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for riassunto in riassunti %}
+                    <tr>
+                        <th> {{riassunto.nome}}</th>
+                        <th> {{riassunto.autore.nome}} {{riassunto.autore.cognome}}</th>
+                        <th> <a href="/update_riassunto/{{riassunto.sid}}"><i class="fas fa-file-upload"></i></a> <a href="/delete_riassunto/{{riassunto.sid}}"><i class="fas fa-times"></i></a></th>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <br>
+                <h3>Materie</h3>
+                <br>
+                <a href="/add_materia" type="button" class="btn btn-success btn-lg btn-block">Aggiungi una materia</a>
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">Corso/Anno/Semestre</th>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Docente</th>
+                        <th>Azioni</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for corso in materie %}
+                        <tr>
+                            <th> {{corso.ramo}}/{{corso.anno}}/{{corso.semestre}}</th>
+                            <th> {{corso.nome}}</th>
+                            <th> {{corso.docente}}</th>
+                            <th> <a href="/edit_materia/{{corso.cid}}"><i class="fas fa-edit"></i></a> <a href="/delete_materia/{{corso.cid}}"><i class="fas fa-times"></i></a></th>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        Nothing to see here
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "stampo.htm" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="card bg-dark text-white">
+    <img class="card-img" src="{{ url_for('static', filename='Erre2.png') }}" alt="Card image">
+    <div class="card-img-overlay">
+    </div>
+</div>
+<br>
+<div class="jumbotron jumbotron-fluid">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-7">
+                <h3>Materie dei riassunti presenti sul sito</h3>
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">Corso/Anno/Semestre</th>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Docente
+                        <th scope="col">Azioni</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for corso in materie %}
+                    <tr>
+                            <th> {{corso.ramo}}/{{corso.anno}}/{{corso.semestre}}</th>
+                            <th> {{corso.nome}}</th>
+                            <th> {{corso.docente}}</th>
+                            <th> <a href="/dashboard/course/{{corso.cid}}"> <i class="fas fa-binoculars"></i></a></th>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-5">
+                <h3>Commit recenti</h3>
+                <table class="table table-sm">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Riassunto</th>
+                        <th scope="col">Data</th>
+                        <th scope="col">Descrizione</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for change in changes %}
+                    <tr>
+                        <th scope="row">{{change.cid}}</th>
+                        <td>{{change.summary.nome}}</td>
+                        <td>{{change.data.day}}/{{change.data.month}}/{{change.data.year}}</td>
+                        <td>{{change.descrizione}}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

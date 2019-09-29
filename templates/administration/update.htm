@@ -1,0 +1,21 @@
+{% extends "stampo.htm" %}
+{% block title %}Aggiornamento riassunto{% endblock %}
+{% block content %}
+<form action="/update_riassunto/{{riassunto.sid}}" method="POST" enctype=multipart/form-data id="form">
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <label for="descrizione" class="col-form-label">Descrizione update</label>
+            <input type="text" class="form-control" id="descrizione" placeholder="" name="descrizione">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-5">
+            <label for="file" class="col-form-label">File</label>
+            <input type=file class="form-control" id="file" name=file>
+        </div>
+    </div>
+    <div class="form-group row">
+        <button type="submit" class="btn btn-primary btn-block">Salva</button>
+    </div>
+</form>
+{%endblock%}

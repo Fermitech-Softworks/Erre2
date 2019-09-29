@@ -1,0 +1,40 @@
+{% extends "stampo.htm" %}
+{% block title %}Aggiunta corso{% endblock %}
+{% block content %}
+<br>
+<h3>Aggiunta di un corso alla piattaforma</h3>
+{% if mode == 0 %}
+<form action="/add_materia" method="POST" enctype=multipart/form-data>
+    {% else %}
+    <form action="/edit_materia/{{corso.cid}}" method="POST" enctype=multipart/form-data>
+        {% endif %}
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="nome" class="col-form-label">Nome</label>
+                <input type="text" class="form-control" id="nome" value="{{corso.nome}}" name="nome">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="docente" class="col-form-label">Docente</label>
+                <input type="text" class="form-control" id="docente" value="{{corso.docente}}" name="docente">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="ramo" class="col-form-label">Ramo</label>
+                <input type="text" class="form-control" id="ramo" value="{{corso.ramo}}" name="ramo">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="anno" class="col-form-label">Anno</label>
+                <input type="text" class="form-control" id="anno" value="{{corso.anno}}" name="anno">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="semestre" class="col-form-label">Semestre</label>
+                <input type="text" class="form-control" id="semestre" value="{{corso.semestre}}" name="semestre">
+            </div>
+        </div>
+        <br>
+        <div class="form-group row">
+            <button type="submit" class="btn btn-primary btn-block">Salva</button>
+        </div>
+    </form>
+    {% endblock %}
