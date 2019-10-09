@@ -5,6 +5,7 @@ import os
 import datetime
 import functools
 from werkzeug.utils import secure_filename
+import requests
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
@@ -13,6 +14,8 @@ app.secret_key = "Prova"
 app.config['UPLOAD_FOLDER'] = "./static"
 ALLOWED_EXTENSIONS = set(['txt', 'md', 'pdf', 'doc', 'docx'])
 db = SQLAlchemy(app)
+telegram_token = ""
+group_chat_id = ""
 
 
 # DB classes go beyond this point
@@ -288,6 +291,9 @@ def page_add_riassunto():
     nuovocommit = Commit("Riassunto aggiunto a Erre2.", int(riassunto.sid))
     db.session.add(nuovocommit)
     db.session.commit()
+    testo = "Il riassunto \"{}\" e' stato caricato su Erre2.".format(nuovoriassunto.nome)
+    param = {"chat_id": group_chat_id, "text": testo}
+    requests.get("https://api.telegram.org/bot" + telegram_token + "/sendMessage", params=param)
     return redirect(url_for('page_administration'))
 
 
@@ -314,6 +320,9 @@ def page_update_riassunto(sid):
     nuovocommit = Commit(request.form.get('descrizione'), riassunto.sid)
     db.session.add(nuovocommit)
     db.session.commit()
+    testo = "Il riassunto \"{}\" e' stato aggiornato.\nModifiche: {}".format(riassunto.nome, nuovocommit.descrizione)
+    param = {"chat_id": group_chat_id, "text": testo}
+    requests.get("https://api.telegram.org/bot" + telegram_token + "/sendMessage", params=param)
     return redirect(url_for('page_administration'))
 
 
