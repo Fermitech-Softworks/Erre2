@@ -16,6 +16,7 @@ ALLOWED_EXTENSIONS = set(['txt', 'md', 'pdf', 'doc', 'docx'])
 db = SQLAlchemy(app)
 telegram_token = ""
 group_chat_id = ""
+url = ""
 
 
 # DB classes go beyond this point
@@ -291,8 +292,9 @@ def page_add_riassunto():
     nuovocommit = Commit("Riassunto aggiunto a Erre2.", int(riassunto.sid))
     db.session.add(nuovocommit)
     db.session.commit()
-    testo = "Il riassunto \"{}\" e' stato caricato su Erre2.".format(nuovoriassunto.nome)
-    param = {"chat_id": group_chat_id, "text": testo}
+    testo = "Il riassunto \"{}\" e' stato caricato su Erre2.\n<a href=\"{}\">Clicca qui per visitare Erre2.</a>".format(
+        nuovoriassunto.nome, url + "/dashboard/course/{}".format(nuovoriassunto.corso_id))
+    param = {"chat_id": group_chat_id, "text": testo, "parse_mode": "html"}
     requests.get("https://api.telegram.org/bot" + telegram_token + "/sendMessage", params=param)
     return redirect(url_for('page_administration'))
 
@@ -320,8 +322,9 @@ def page_update_riassunto(sid):
     nuovocommit = Commit(request.form.get('descrizione'), riassunto.sid)
     db.session.add(nuovocommit)
     db.session.commit()
-    testo = "Il riassunto \"{}\" e' stato aggiornato.\nModifiche: {}".format(riassunto.nome, nuovocommit.descrizione)
-    param = {"chat_id": group_chat_id, "text": testo}
+    testo = "Il riassunto \"{}\" e' stato aggiornato.\nModifiche: {}\n<a href=\"{}\">Clicca qui per visitare Erre2.</a>".format(
+        riassunto.nome, nuovocommit.descrizione, url + "/dashboard/course/{}".format(riassunto.corso_id))
+    param = {"chat_id": group_chat_id, "text": testo, "parse_mode": "html"}
     requests.get("https://api.telegram.org/bot" + telegram_token + "/sendMessage", params=param)
     return redirect(url_for('page_administration'))
 
