@@ -10,13 +10,13 @@ import requests
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.secret_key = os.environ.get("COOKIE_SECRET_KEY")
+app.secret_key = os.environ["COOKIE_SECRET_KEY"]
 app.config['UPLOAD_FOLDER'] = "./static"
 ALLOWED_EXTENSIONS = set(['txt', 'md', 'pdf', 'doc', 'docx'])
 db = SQLAlchemy(app)
-telegram_token = ""
-group_chat_id = ""
-url = ""
+telegram_token = os.environ["TELEGRAM_BOT_TOKEN"]
+group_chat_id = os.environ["TARGET_CHAT_ID"]
+url = os.environ["BASE_URL"]
 
 
 # DB classes go beyond this point
