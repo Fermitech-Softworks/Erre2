@@ -190,19 +190,19 @@ def page_dashboard():
 
 @app.route('/dashboard/course/<int:cid>')
 def page_filter_course(cid):
-    riassunti = Summary.query.filter_by(corso_id=cid).join(Author).all()
+    riassunti = Summary.query.filter_by(corso_id=cid).join(Author).join(Commit).order_by(Commit.cid.desc()).all()
     return render_template("/riassunti_list.htm", riassunti=riassunti)
 
 
 @app.route('/dashboard/author/<int:aid>')
 def page_filter_author(aid):
-    riassunti = Summary.query.filter_by(autore_id=aid).join(Author).all()
+    riassunti = Summary.query.filter_by(autore_id=aid).join(Author).join(Commit).order_by(Commit.cid.desc()).all()
     return render_template("/riassunti_list.htm", riassunti=riassunti)
 
 
 @app.route('/dashboard/summaries')
 def page_riassunti_list():
-    riassunti = Summary.query.join(Author).all()
+    riassunti = Summary.query.join(Author).join(Commit).order_by(Commit.cid.desc()).all()
     return render_template("/riassunti_list.htm", riassunti=riassunti)
 
 
@@ -379,9 +379,11 @@ def func_edit_account():
 
 if __name__ == "__main__":
     # Aggiungi sempre le tabelle non esistenti al database, senza cancellare quelle vecchie
+    print("Ciao")
     db.create_all()
     autore = Author.query.all()
     if len(autore) == 0:
+        nuovoutente = Author("Dummy", "Foo", "foo.dummy@test.com", "password")
         db.session.add(nuovoutente)
         db.session.commit()
     app.run()

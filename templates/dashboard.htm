@@ -1,64 +1,76 @@
 {% extends "stampo.htm" %}
 {% block title %}Home{% endblock %}
 {% block content %}
-<div class="card bg-white text-white">
-    <img class="card-img" src="{{ url_for('static', filename='Erre2.png') }}" alt="Card image">
-    <div class="card-img-overlay">
+    <div class="card bg-white text-white">
+        <img class="card-img" src="{{ url_for('static', filename='Erre2.png') }}" alt="Card image">
+        <div class="card-img-overlay">
+        </div>
     </div>
-</div>
-<br>
-<div class="jumbotron jumbotron-fluid">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-7">
-                <h3>Materie dei riassunti presenti sul sito</h3>
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th scope="col">Corso/Anno/Semestre</th>
-                        <th scope="col">Nome - docente</th>
-                        <th scope="col">Azioni</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for corso in materie %}
-                    <tr>
-                            <th> {{corso.ramo}}/{{corso.anno}}/{{corso.semestre}}</th>
-                            <th> {{corso.nome}} - {{corso.docente}}</th>
-                            <th> <a href="/dashboard/course/{{corso.cid}}"> <i class="fas fa-binoculars"></i></a></th>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-md-5">
-                <h3>Commit recenti</h3>
-                <table class="table table-sm">
-                    <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Riassunto</th>
-                        <th scope="col">Data</th>
-                        <th scope="col">Descrizione</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for change in changes %}
-                    <tr>
-                        <th scope="row">{{change.cid}}</th>
-                        <td>{{change.summary.nome}}</td>
-                        <td>{{change.data.day}}/{{change.data.month}}/{{change.data.year}}</td>
-                        <td>{{change.descrizione}}</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+    <br>
+    <div class="alert alert-primary" role="alert">
+        Apprezzi questo sito? Perchè non mi offri un <a href="https://ko-fi.com/evilbalu" target="_blank"> caffè</a>?
+    </div>
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-7">
+                    <h3>Materie dei riassunti presenti sul sito</h3>
+                    <div style="overflow-x: auto;">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th scope="col">Corso/Anno/Semestre</th>
+                                <th scope="col">Nome - docente</th>
+                                <th scope="col">Azioni</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for corso in materie %}
+                                <tr>
+                                    <th> {{ corso.ramo }}/{{ corso.anno }}/{{ corso.semestre }}</th>
+                                    <th> {{ corso.nome }} - {{ corso.docente }}</th>
+                                    <th><a href="/dashboard/course/{{ corso.cid }}"> <i
+                                            class="fas fa-binoculars"></i></a></th>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <h3>Commit recenti</h3>
+                    <div style="overflow-x: auto;">
+                        <table class="table table-sm">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Riassunto</th>
+                                <th scope="col">Data</th>
+                                <th scope="col">Descrizione</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for change in changes %}
+                                <tr>
+                                    <th scope="row">{{ change.cid }}</th>
+                                    <td>{{ change.summary.nome }}</td>
+                                    <td>{{ change.data.day }}/{{ change.data.month }}/{{ change.data.year }}</td>
+                                    <td>{{ change.descrizione }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<br>
-<center>Erre2 è un software open-source scritto da Balugani Lorenzo, copyleft 2019 Fermitech Softworks.</center>
-<br>
-<center><a href="https://www.websitepolicies.com/policies/view/XzHPun1a">Privacy policy</a>, <a href="https://www.websitepolicies.com/policies/view/ChODGXPr">Cookie Policy</a>, <a href="https://github.com/Fermitech-Softworks/Erre2">Github</a></center>
+    <br>
+    <center>Erre2 è un software open-source (licenza GPL v3) scritto da Balugani Lorenzo, copyleft 2019 Fermitech
+        Softworks.
+    </center>
+    <br>
+    <center><a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Licenza sui riassunti (CC BY-SA
+        4.0)</a>, <a href="https://github.com/Fermitech-Softworks/Erre2" target="_blank">Repository di Erre2</a>
+    </center>
 {% endblock %}
