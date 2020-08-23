@@ -1,0 +1,8 @@
+db.sqlite
+static/*.txt
+static/*.md
+static/*.pdf
+static/*.doc
+static/*.docx
+venv/
+__pycache__/
