@@ -340,7 +340,7 @@ def func_delete_riassunto(sid):
     for committ in commits:
         db.session.delete(committ)
     try:
-        os.remove("./static/" + riassunto.filename)
+        os.remove(pathlib.Path(app.config["UPLOAD_FOLDER"]).joinpath(riassunto.filename))
     except FileNotFoundError:
         pass
     db.session.delete(riassunto)
@@ -358,7 +358,7 @@ def func_delete_materia(cid):
         for committ in commits:
             db.session.delete(committ)
         try:
-            os.remove("./files/" + riassunto.filename)
+            os.remove(pathlib.Path(app.config["UPLOAD_FOLDER"]).joinpath(riassunto.filename))
         except FileNotFoundError:
             pass
         db.session.delete(riassunto)
