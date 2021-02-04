@@ -7,6 +7,7 @@ import functools
 from werkzeug.utils import secure_filename
 import requests
 import pathlib
+import werkzeug.middleware.proxy_fix
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
@@ -17,7 +18,7 @@ ALLOWED_EXTENSIONS = set(['txt', 'md', 'pdf', 'doc', 'docx'])
 db = SQLAlchemy(app)
 telegram_token = os.environ["TELEGRAM_BOT_TOKEN"]
 group_chat_id = os.environ["TARGET_CHAT_ID"]
-
+reverse_proxy_app = werkzeug.middleware.proxy_fix.ProxyFix(app=app, x_for=1, x_proto=0, x_host=1, x_port=0, x_prefix=0)
 
 # DB classes go beyond this point
 
