@@ -16,24 +16,14 @@ If you need a full website translation, please open an issue. I will be more tha
    git clone git@github.com:Fermitech-Softworks/Erre2.git
    ```
    
-2. Create a new `venv`:
-   ``` 
-   python -m venv venv
-   ```
-   
-3. `activate` the venv you just created:
-   ```bash
-   source venv/bin/activate
-   ```
-  
-4. Install the requirements using `pip`:
-   ```
-   pip install -r requirements.txt
-   ```
-   
 ### For development
 
-5. Use `export` to set the required environment variables:
+2. Install dependencies using `poetry`:
+   ```bash
+   poetry install
+   ```
+
+3. Use `export` to set the required environment variables:
    ```bash
    export COOKIE_SECRET_KEY='qwerty'  # A random string of characters
    export TELEGRAM_BOT_TOKEN='1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'  # The token for the Telegram notifier bot, get one at https://t.me/BotFather
@@ -41,14 +31,29 @@ If you need a full website translation, please open an issue. I will be more tha
    export URL='http://127.0.0.1'  # The url at which Erre2 will be served
    ```
    
-6. Run the `flask` development server:
+4. Run the `flask` development server:
    ```
-   python server.py
+   poetry run python -m erre2
    ```
    
 ### For production
 
 _Assuming you are using a Linux distribution which supports systemd and has apache2 installed._
+
+2. Create a new `venv`:
+   ``` 
+   python -m venv venv
+   ```
+
+3. `activate` the venv you just created:
+   ```bash
+   source venv/bin/activate
+   ```
+
+4. Install the package from `pip`:
+   ```
+   pip install erre2
+   ```
 
 5. Create the file `/etc/systemd/system/web-erre2.service` with the following contents:
    ```ini

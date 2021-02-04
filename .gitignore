@@ -6,3 +6,6 @@ static/*.doc
 static/*.docx
 venv/
 __pycache__/
+
+erre2.egg-info/
+.idea/
