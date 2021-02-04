@@ -4,10 +4,10 @@
 <br>
 <h3>Aggiunta di un corso alla piattaforma</h3>
 {% if mode == 0 %}
-<form action="/add_materia" method="POST" enctype=multipart/form-data>
-    {% else %}
-    <form action="/edit_materia/{{corso.cid}}" method="POST" enctype=multipart/form-data>
-        {% endif %}
+    <form action="{{ url_for("page_add_materia") }}" method="POST" enctype=multipart/form-data>
+{% else %}
+    <form action="{{ url_for("page_edit_materia", cid=corso.cid) }}" method="POST" enctype=multipart/form-data>
+{% endif %}
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label for="nome" class="col-form-label">Nome</label>

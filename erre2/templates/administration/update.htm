@@ -1,7 +1,7 @@
 {% extends "stampo.htm" %}
 {% block title %}Aggiornamento riassunto{% endblock %}
 {% block content %}
-<form action="/update_riassunto/{{riassunto.sid}}" method="POST" enctype=multipart/form-data id="form">
+<form action="{{ url_for("page_update_riassunto", sid=riassunto.sid) }}" method="POST" enctype=multipart/form-data id="form">
     <div class="form-row">
         <div class="form-group col-md-12">
             <label for="descrizione" class="col-form-label">Descrizione update</label>

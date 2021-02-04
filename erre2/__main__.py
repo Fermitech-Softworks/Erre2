@@ -1,4 +1,4 @@
-from flask import Flask, session, url_for, redirect, request, render_template, abort
+from flask import Flask, session, url_for, redirect, request, render_template, abort, send_file
 from flask_sqlalchemy import SQLAlchemy
 import bcrypt
 import os
@@ -6,18 +6,19 @@ import datetime
 import functools
 from werkzeug.utils import secure_filename
 import requests
+import pathlib
+import werkzeug.middleware.proxy_fix
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.environ["COOKIE_SECRET_KEY"]
-app.config['UPLOAD_FOLDER'] = "./static"
+app.config['UPLOAD_FOLDER'] = "./uploads"
 ALLOWED_EXTENSIONS = set(['txt', 'md', 'pdf', 'doc', 'docx'])
 db = SQLAlchemy(app)
 telegram_token = os.environ["TELEGRAM_BOT_TOKEN"]
 group_chat_id = os.environ["TARGET_CHAT_ID"]
-url = os.environ["BASE_URL"]
-
+reverse_proxy_app = werkzeug.middleware.proxy_fix.ProxyFix(app=app, x_for=1, x_proto=0, x_host=1, x_port=0, x_prefix=0)
 
 # DB classes go beyond this point
 
@@ -211,7 +212,10 @@ def page_inspect_riassunto(sid):
     riassunto = Summary.query.filter_by(sid=sid).first()
     riassunto.downloads += 1
     db.session.commit()
-    return redirect("/static/" + riassunto.filename.replace(" ", "_"))
+
+    # Trova il percorso del file
+    path = pathlib.Path(app.config["UPLOAD_FOLDER"]).joinpath(riassunto.filename).absolute()
+    return send_file(path, as_attachment=True, attachment_filename=path.name)
 
 
 # Pages and functions for the administrator
@@ -284,7 +288,7 @@ def page_add_riassunto():
         return redirect(request.url)
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        file.save(filename)
     nuovoriassunto = Summary(request.form.get("nome"), request.form.get("descrizione"), int(utente.aid),
                              int(request.form["listamaterie"]), file.filename)
     db.session.add(nuovoriassunto)
@@ -293,7 +297,7 @@ def page_add_riassunto():
     db.session.add(nuovocommit)
     db.session.commit()
     testo = "Il riassunto \"{}\" e' stato caricato su Erre2.\n<a href=\"{}\">Clicca qui per visitare Erre2.</a>".format(
-        nuovoriassunto.nome, url + "/dashboard/course/{}".format(nuovoriassunto.corso_id))
+        nuovoriassunto.nome, url_for("page_filter_course", cid=nuovoriassunto.corso_id))
     param = {"chat_id": group_chat_id, "text": testo, "parse_mode": "html"}
     requests.get("https://api.telegram.org/bot" + telegram_token + "/sendMessage", params=param)
     return redirect(url_for('page_administration'))
@@ -323,7 +327,7 @@ def page_update_riassunto(sid):
     db.session.add(nuovocommit)
     db.session.commit()
     testo = "Il riassunto \"{}\" e' stato aggiornato.\nModifiche: {}\n<a href=\"{}\">Clicca qui per visitare Erre2.</a>".format(
-        riassunto.nome, nuovocommit.descrizione, url + "/dashboard/course/{}".format(riassunto.corso_id))
+        riassunto.nome, nuovocommit.descrizione, url_for("page_filter_course", cid=riassunto.corso_id))
     param = {"chat_id": group_chat_id, "text": testo, "parse_mode": "html"}
     requests.get("https://api.telegram.org/bot" + telegram_token + "/sendMessage", params=param)
     return redirect(url_for('page_administration'))
@@ -337,7 +341,7 @@ def func_delete_riassunto(sid):
     for committ in commits:
         db.session.delete(committ)
     try:
-        os.remove("./static/" + riassunto.filename)
+        os.remove(pathlib.Path(app.config["UPLOAD_FOLDER"]).joinpath(riassunto.filename))
     except FileNotFoundError:
         pass
     db.session.delete(riassunto)
@@ -355,7 +359,7 @@ def func_delete_materia(cid):
         for committ in commits:
             db.session.delete(committ)
         try:
-            os.remove("./files/" + riassunto.filename)
+            os.remove(pathlib.Path(app.config["UPLOAD_FOLDER"]).joinpath(riassunto.filename))
         except FileNotFoundError:
             pass
         db.session.delete(riassunto)
@@ -378,6 +382,9 @@ def func_edit_account():
 
 
 if __name__ == "__main__":
+    # Assicurati che la cartella ./uploads esista
+    os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+
     # Aggiungi sempre le tabelle non esistenti al database, senza cancellare quelle vecchie
     print("Ciao")
     db.create_all()

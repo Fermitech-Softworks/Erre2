@@ -18,7 +18,7 @@
                 <br>
                 <h3>Riassunti</h3>
                 <br>
-                <a href="/add_riassunto" type="button" class="btn btn-success btn-lg btn-block">Aggiungi un
+                <a href="{{ url_for("page_add_riassunto") }}" type="button" class="btn btn-success btn-lg btn-block">Aggiungi un
                     riassunto</a>
                 <table class="table table-hover">
                     <thead>
@@ -33,8 +33,8 @@
                     <tr>
                         <th> {{riassunto.nome}}</th>
                         <th> {{riassunto.autore.nome}} {{riassunto.autore.cognome}}</th>
-                        <th><a href="/update_riassunto/{{riassunto.sid}}"><i class="fas fa-file-upload"></i></a> <a
-                                href="/delete_riassunto/{{riassunto.sid}}"><i class="fas fa-times"></i></a></th>
+                        <th><a href="{{ url_for("page_update_riassunto", sid=riassunto.sid) }}"><i class="fas fa-file-upload"></i></a> <a
+                                href="{{ url_for("func_delete_riassunto", sid=riassunto.sid) }}"><i class="fas fa-times"></i></a></th>
                     </tr>
                     {% endfor %}
                     </tbody>
@@ -44,7 +44,7 @@
                 <br>
                 <h3>Materie</h3>
                 <br>
-                <a href="/add_materia" type="button" class="btn btn-success btn-lg btn-block">Aggiungi una materia</a>
+                <a href="{{ url_for("page_add_materia") }}" type="button" class="btn btn-success btn-lg btn-block">Aggiungi una materia</a>
                 <table class="table table-hover">
                     <thead>
                     <tr>
@@ -60,8 +60,8 @@
                         <th> {{corso.ramo}}/{{corso.anno}}/{{corso.semestre}}</th>
                         <th> {{corso.nome}}</th>
                         <th> {{corso.docente}}</th>
-                        <th><a href="/edit_materia/{{corso.cid}}"><i class="fas fa-edit"></i></a> <a
-                                href="/delete_materia/{{corso.cid}}"><i class="fas fa-times"></i></a></th>
+                        <th><a href="{{ url_for("page_edit_materia", cid=corso.cid) }}"><i class="fas fa-edit"></i></a> <a
+                                href="{{ url_for("func_delete_materia", cid=corso.cid) }}"><i class="fas fa-times"></i></a></th>
                     </tr>
                     {% endfor %}
                     </tbody>
@@ -72,7 +72,7 @@
     <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
         <br>
         <h3> Modifica dell'account </h3>
-        <form action="/edit_account" method="POST" enctype=multipart/form-data>
+        <form action="{{ url_for("func_edit_account") }}" method="POST" enctype=multipart/form-data>
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="nome" class="col-form-label">Nome</label>
