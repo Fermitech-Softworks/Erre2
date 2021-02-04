@@ -213,7 +213,7 @@ def page_inspect_riassunto(sid):
     db.session.commit()
 
     # Trova il percorso del file
-    path = pathlib.Path(".").joinpath(app.config["UPLOAD_FOLDER"]).joinpath(riassunto.filename).absolute()
+    path = pathlib.Path(app.config["UPLOAD_FOLDER"]).joinpath(riassunto.filename).absolute()
     return send_file(path, as_attachment=True, attachment_filename=path.name)
 
 
