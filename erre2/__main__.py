@@ -1,4 +1,4 @@
-from flask import Flask, session, url_for, redirect, request, render_template, abort, send_file, after_this_request
+from flask import Flask, session, url_for, redirect, request, render_template, abort, send_file
 from flask_sqlalchemy import SQLAlchemy
 import bcrypt
 import os
