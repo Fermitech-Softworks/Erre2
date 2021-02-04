@@ -28,7 +28,7 @@ If you need a full website translation, please open an issue. I will be more tha
    export COOKIE_SECRET_KEY='qwerty'  # A random string of characters
    export TELEGRAM_BOT_TOKEN='1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'  # The token for the Telegram notifier bot, get one at https://t.me/BotFather
    export TARGET_CHAT_ID='-100XXXXXXXXXX'  # The Telegram chat id where the notifications should be sent, remember that the id of supergroups is prefixed by -100
-   export URL='http://127.0.0.1'  # The url at which Erre2 will be served
+   export BASE_URL='http://127.0.0.1'  # The url at which Erre2 will be served
    ```
    
 4. Run the `flask` development server:
