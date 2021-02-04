@@ -1,4 +1,4 @@
-from flask import Flask, session, url_for, redirect, request, render_template, abort
+from flask import Flask, session, url_for, redirect, request, render_template, abort, send_file, after_this_request
 from flask_sqlalchemy import SQLAlchemy
 import bcrypt
 import os
@@ -6,12 +6,13 @@ import datetime
 import functools
 from werkzeug.utils import secure_filename
 import requests
+import pathlib
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.environ["COOKIE_SECRET_KEY"]
-app.config['UPLOAD_FOLDER'] = "./static"
+app.config['UPLOAD_FOLDER'] = "./uploads"
 ALLOWED_EXTENSIONS = set(['txt', 'md', 'pdf', 'doc', 'docx'])
 db = SQLAlchemy(app)
 telegram_token = os.environ["TELEGRAM_BOT_TOKEN"]
@@ -211,7 +212,10 @@ def page_inspect_riassunto(sid):
     riassunto = Summary.query.filter_by(sid=sid).first()
     riassunto.downloads += 1
     db.session.commit()
-    return redirect("/static/" + riassunto.filename.replace(" ", "_"))
+
+    # Trova il percorso del file
+    path = pathlib.Path(".").joinpath(app.config["UPLOAD_FOLDER"]).joinpath(riassunto.filename).absolute()
+    return send_file(path, as_attachment=True, attachment_filename=path.name)
 
 
 # Pages and functions for the administrator
@@ -284,7 +288,7 @@ def page_add_riassunto():
         return redirect(request.url)
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        file.save(filename)
     nuovoriassunto = Summary(request.form.get("nome"), request.form.get("descrizione"), int(utente.aid),
                              int(request.form["listamaterie"]), file.filename)
     db.session.add(nuovoriassunto)
@@ -378,6 +382,9 @@ def func_edit_account():
 
 
 if __name__ == "__main__":
+    # Assicurati che la cartella ./uploads esista
+    os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+
     # Aggiungi sempre le tabelle non esistenti al database, senza cancellare quelle vecchie
     print("Ciao")
     db.create_all()

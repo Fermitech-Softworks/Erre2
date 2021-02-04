@@ -1,96 +1,176 @@
-# 🇮🇹 Erre2: Raccoglitore (di) Riassunti
-Erre2 è un webserver scritto in python che si pone come obiettivo quello di creare una piattaforma gradevole da usare
-per l'universitario medio sulla quale è possibile caricare e aggiornare riassunti, piuttosto che ritrovarseli sparpagliati nel gruppo universitario. 
-Con Erre2, inoltre, è possibile ricevere notifiche mediante Telegram di aggiornamenti e nuovi arrivi sulla piattaforma, per essere sempre aggiornati e pronti agli esami.
+# thorunimore
 
-# 🇬🇧 Erre2: a simple Summary Binder
-Erre2 is a webserver written in python that aims to become a comfortable platform to be used by the average university student to gather summaries in a more methodic and organized way than scattered in a Whatsapp group. Erre2 also supports telegram integration: provide your university group chat-id, and Erre2 will tell everyone if a new summary gets uploaded or updated.  
-If you need a full website translation, please open an issue. I will be more than happy to provide one.
+![](resources/bot_image.png)
 
------
+A moderator bot for the Unimore Informatica group
 
 ## Installation
 
-1. Clone this repository using `git`:
-   ```
-   git clone git@github.com:Fermitech-Softworks/Erre2.git
-   ```
-   
-### For development
-
-2. Install dependencies using `poetry`:
+1. Create a new venv and enter it:
    ```bash
-   poetry install
-   ```
-
-3. Use `export` to set the required environment variables:
-   ```bash
-   export COOKIE_SECRET_KEY='qwerty'  # A random string of characters
-   export TELEGRAM_BOT_TOKEN='1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'  # The token for the Telegram notifier bot, get one at https://t.me/BotFather
-   export TARGET_CHAT_ID='-100XXXXXXXXXX'  # The Telegram chat id where the notifications should be sent, remember that the id of supergroups is prefixed by -100
-   export BASE_URL='http://127.0.0.1'  # The url at which Erre2 will be served
-   ```
-   
-4. Run the `flask` development server:
-   ```
-   poetry run python -m erre2
-   ```
-   
-### For production
-
-_Assuming you are using a Linux distribution which supports systemd and has apache2 installed._
-
-2. Create a new `venv`:
-   ``` 
    python -m venv venv
-   ```
-
-3. `activate` the venv you just created:
-   ```bash
    source venv/bin/activate
    ```
-
-4. Install the package from `pip`:
+   
+2. Download through PyPI:
+   ```bash
+   pip install thorunimore
    ```
-   pip install erre2
+   
+3. Install the packages required to connect to the desired SQL database:
+   
+   - For PostgreSQL:
+     ```bash
+     pip install psycopg2-binary
+     ```
+
+## Running
+
+### Development
+
+1. Set the following env variables:
+
+   - [The URI of the SQL database you want to use](https://docs.sqlalchemy.org/en/13/core/engines.html)
+     ```bash
+     SQLALCHEMY_DATABASE_URI=postgresql://steffo@/thor_dev
+     ```
+   
+   - [A Google OAuth 2.0 client id and client secret](https://console.developers.google.com/apis/credentials)
+     ```bash
+     GOOGLE_CLIENT_ID=000000000000-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.apps.googleusercontent.com
+     GOOGLE_CLIENT_SECRET=aaaaaaaaaaaaaaaaaaaaaaaa
+     ```
+   
+   - A random string of characters used to sign Telegram data
+     ```bash
+     SECRET_KEY=Questo è proprio un bel test.
+     ```
+   
+   - [api_id and api_hash for a Telegram application](https://my.telegram.org/apps)
+     ```bash
+     TELEGRAM_API_ID=1234567
+     TELEGRAM_API_HASH=abcdefabcdefabcdefabcdefabcdefab
+     ```
+
+   - [The username and token of the Telegram bot](https://t.me/BotFather)
+     ```bash
+     TELEGRAM_BOT_USERNAME=thorunimorebot
+     TELEGRAM_BOT_TOKEN=1111111111:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+     ```
+
+   - The desired logging level and format
+     ```bash
+     LOG_LEVEL=DEBUG
+     LOG_FORMAT={asctime}\t| {name}\t| {message}
+     ```
+   
+   - The url at which web is hosted
+     ```bash
+     BASE_URL=http://lo.steffo.eu:30008
+     ```
+     
+   - The url to join the Telegram group
+     ```bash
+     GROUP_URL=https://t.me/joinchat/AAAAAAAAAAAAAAAAAAAAAA
+     ```
+
+2. Run both the following processes:
+   ```bash
+   python -m thorunimore.telegram &
+   python -m thorunimore.web &
    ```
 
-5. Create the file `/etc/systemd/system/web-erre2.service` with the following contents:
+### Production
+
+1. Install `gunicorn` in the previously created venv:
+   ```
+   pip install gunicorn
+   ```
+
+2. Create the `bot-thorunimore` systemd unit by creating the `/etc/systemd/system/bot-thorunimore.service` file:
    ```ini
    [Unit]
-   Name=web-erre2
-   Description=Erre2 Gunicorn Server
-   Wants=network-online.target
+   Name=bot-thorunimore
+   Description=A moderator bot for the Unimore Informatica group
+   Requires=network-online.target postgresql.service
    After=network-online.target nss-lookup.target
    
    [Service]
    Type=exec
-   User=erre2
-   WorkingDirectory=/opt/erre2  # Replace with the directory where you cloned the repository
-   ExecStart=/opt/erre2/venv/bin/gunicorn -b 127.0.0.1:30002 server:app  # Replace with the directory where you cloned the repository
+   User=thorunimore
+   WorkingDirectory=/opt/thorunimore
+   ExecStart=/opt/thorunimore/venv/bin/python -OO -m thorunimore.telegram
+   Environment=PYTHONUNBUFFERED=1
+   
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+3. Create the `web-thorunimore` systemd unit by creating the `/etc/systemd/system/web-thorunimore.service` file:
+   ```ini
+   [Unit]
+   Name=web-thorunimore
+   Description=Thorunimore Gunicorn Server
+   Wants=network-online.target postgresql.service
+   After=network-online.target nss-lookup.target
+   
+   [Service]
+   Type=exec
+   User=thorunimore
+   WorkingDirectory=/opt/thorunimore
+   ExecStart=/opt/thorunimore/venv/bin/gunicorn -b 127.0.0.1:30008 thorunimore.web.__main__:reverse_proxy_app
    
    [Install]
    WantedBy=multi-user.target
    ```
    
-6. Create the file `/etc/systemd/system/web-erre2.service.d/override.conf` with the following contents:
+4. Create the `/etc/systemd/system/bot-thorunimore.d/override.conf` and 
+   `/etc/systemd/system/web-thorunimore.d/override.conf` files:
    ```ini
    [Service]
-   Environment="COOKIE_SECRET_KEY=qwerty"  # A random string of characters
-   Environment="BASE_URL=https://erre2.fermitech.info"  # The url at which Erre2 will be served
-   Environment="TELEGRAM_BOT_TOKEN=1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"  # The token for the Telegram notifier bot, get one at https://t.me/BotFather
-   Environment="TARGET_CHAT_ID=-100XXXXXXXXXX"  # The url at which Erre2 will be served
+   Environment="SQLALCHEMY_DATABASE_URI=postgresql://thorunimore@/thor_prod"
+   Environment="GOOGLE_CLIENT_ID=000000000000-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.apps.googleusercontent.com"
+   Environment="GOOGLE_CLIENT_SECRET=aaaaaaaaaaaaaaaaaaaaaaaa"
+   Environment="SECRET_KEY=Questo è proprio un bel server."
+   Environment="TELEGRAM_API_ID=1234567"
+   Environment="TELEGRAM_API_HASH=abcdefabcdefabcdefabcdefabcdefab"
+   Environment="TELEGRAM_BOT_USERNAME=thorunimorebot"
+   Environment="TELEGRAM_BOT_TOKEN=1111111111:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+   Environment="LOG_LEVEL=DEBUG"
+   Environment="LOG_FORMAT={asctime}\t| {name}\t| {message}"
+   Environment="BASE_URL=https://thor.steffo.eu"
+   Environment="GROUP_URL=https://t.me/joinchat/AAAAAAAAAAAAAAAAAAAAAA"
    ```
    
-7. Reload all `systemd` daemon files:
+5. Start (and optionally enable) both services:
+   ```bash
+   systemctl start "*-thorunimore"
+   systemctl enable "*-thorunimore"
    ```
-   systemctl daemon-reload
+
+6. Reverse-proxy the web service:
    ```
+   <VirtualHost *:80>
    
-8. `start` (and optionally `enable` to run at boot) the `web-erre2` systemd service:
-   ```
-   systemctl start web-erre2
-   systemctl enable web-erre2
-   ```
+   ServerName "thor.steffo.eu"
+   Redirect permanent "/" "https://thor.steffo.eu/"
    
-9. Configure a reverse proxy (`apache2`, `nginx`, ...) to proxy requests to and from `127.0.0.1:30002`.
+   </VirtualHost>
+   
+   <VirtualHost *:443>
+   
+   ServerName "thor.steffo.eu"
+   
+   ProxyPass "/" "http://127.0.0.1:30008/"
+   ProxyPassReverse "/" "http://127.0.0.1:30008/"
+   RequestHeader set "X-Forwarded-Proto" expr=%{REQUEST_SCHEME}
+   
+   SSLEngine on
+   SSLCertificateFile "/root/.acme.sh/*.steffo.eu/fullchain.cer"
+   SSLCertificateKeyFile "/root/.acme.sh/*.steffo.eu/*.steffo.eu.key"
+   
+   </VirtualHost>
+   ```
+   ```bash
+   a2ensite rp-thorunimore
+   ```

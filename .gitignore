@@ -1,11 +1,7 @@
 db.sqlite
-static/*.txt
-static/*.md
-static/*.pdf
-static/*.doc
-static/*.docx
 venv/
 __pycache__/
 
 erre2.egg-info/
 .idea/
+uploads/
