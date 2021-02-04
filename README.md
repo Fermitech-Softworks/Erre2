@@ -28,7 +28,6 @@ If you need a full website translation, please open an issue. I will be more tha
    export COOKIE_SECRET_KEY='qwerty'  # A random string of characters
    export TELEGRAM_BOT_TOKEN='1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'  # The token for the Telegram notifier bot, get one at https://t.me/BotFather
    export TARGET_CHAT_ID='-100XXXXXXXXXX'  # The Telegram chat id where the notifications should be sent, remember that the id of supergroups is prefixed by -100
-   export BASE_URL='http://127.0.0.1'  # The url at which Erre2 will be served
    ```
    
 4. Run the `flask` development server:
@@ -67,7 +66,7 @@ _Assuming you are using a Linux distribution which supports systemd and has apac
    Type=exec
    User=erre2
    WorkingDirectory=/opt/erre2  # Replace with the directory where you cloned the repository
-   ExecStart=/opt/erre2/venv/bin/gunicorn -b 127.0.0.1:30002 server:app  # Replace with the directory where you cloned the repository
+   ExecStart=/opt/erre2/venv/bin/gunicorn -b 127.0.0.1:30002 erre2.__main__:reverse_proxy_app  # Replace with the directory where you cloned the repository
    
    [Install]
    WantedBy=multi-user.target
@@ -77,9 +76,8 @@ _Assuming you are using a Linux distribution which supports systemd and has apac
    ```ini
    [Service]
    Environment="COOKIE_SECRET_KEY=qwerty"  # A random string of characters
-   Environment="BASE_URL=https://erre2.fermitech.info"  # The url at which Erre2 will be served
    Environment="TELEGRAM_BOT_TOKEN=1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"  # The token for the Telegram notifier bot, get one at https://t.me/BotFather
-   Environment="TARGET_CHAT_ID=-100XXXXXXXXXX"  # The url at which Erre2 will be served
+   Environment="TARGET_CHAT_ID=-100XXXXXXXXXX"  # The Telegram chat id where the notifications should be sent, remember that the id of supergroups is prefixed by -100
    ```
    
 7. Reload all `systemd` daemon files:
