@@ -1,5 +1,5 @@
 <nav class="navbar navbar-dark bg-dark navbar-static-top">
-    <a class="navbar-brand" href="/">Erre2</a>
+    <a class="navbar-brand" href="{{ url_for("page_home") }}">Erre2</a>
     {% if utente %}
     <a href="/" class="btn btn-danger">Logout</a>
     {% else %}
@@ -19,7 +19,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form class="form-inline" action="/login" method="POST">
+                    <form class="form-inline" action="{{ url_for("func_login") }}" method="POST">
                         <input class="form-control mr-sm-2" type="email" placeholder="Username" aria-label="username"
                                name="username">
                         <input class="form-control mr-sm-2" type="password" placeholder="Password" aria-label="password"

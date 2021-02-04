@@ -29,7 +29,7 @@
                                 <tr>
                                     <th> {{ corso.ramo }}/{{ corso.anno }}/{{ corso.semestre }}</th>
                                     <th> {{ corso.nome }} - {{ corso.docente }}</th>
-                                    <th><a href="/dashboard/course/{{ corso.cid }}"> <i
+                                    <th><a href="{{ url_for("page_filter_course", cid=corso.cid) }}"> <i
                                             class="fas fa-binoculars"></i></a></th>
                                 </tr>
                             {% endfor %}

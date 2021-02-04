@@ -1,7 +1,7 @@
 {% extends "stampo.htm" %}
 {% block title %}Aggiunta riassunto{% endblock %}
 {% block content %}
-<form action="/add_riassunto" method="POST" enctype=multipart/form-data id="form">
+<form action="{{ url_for("page_add_riassunto") }}" method="POST" enctype=multipart/form-data id="form">
     <div class="form-row">
         <div class="form-group col-md-3">
             <label for="nome" class="col-form-label">Nome</label>
