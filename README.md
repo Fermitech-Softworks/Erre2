@@ -26,8 +26,10 @@ If you need a full website translation, please open an issue. I will be more tha
 3. Use `export` to set the required environment variables:
    ```bash
    export COOKIE_SECRET_KEY='qwerty'  # A random string of characters
-   export TELEGRAM_BOT_TOKEN='1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'  # The token for the Telegram notifier bot, get one at https://t.me/BotFather
-   export TARGET_CHAT_ID='-100XXXXXXXXXX'  # The Telegram chat id where the notifications should be sent, remember that the id of supergroups is prefixed by -100
+   # The token for the Telegram notifier bot, get one at https://t.me/BotFather
+   export TELEGRAM_BOT_TOKEN='1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+   # The Telegram chat id where the notifications should be sent, remember that the id of supergroups is prefixed by -100
+   export TARGET_CHAT_ID='-100XXXXXXXXXX'
    ```
    
 4. Run the `flask` development server:
@@ -65,8 +67,11 @@ _Assuming you are using a Linux distribution which supports systemd and has apac
    [Service]
    Type=exec
    User=erre2
-   WorkingDirectory=/opt/erre2  # Replace with the directory where you cloned the repository
-   ExecStart=/opt/erre2/venv/bin/gunicorn -b 127.0.0.1:30002 erre2.__main__:reverse_proxy_app  # Replace with the directory where you cloned the repository
+   Group=erre2
+   # Replace with the directory where you cloned the repository
+   WorkingDirectory=/opt/erre2
+   # Replace with the directory where you cloned the repository
+   ExecStart=/opt/erre2/venv/bin/gunicorn -b 127.0.0.1:30002 erre2.__main__:reverse_proxy_app
    
    [Install]
    WantedBy=multi-user.target
@@ -75,9 +80,12 @@ _Assuming you are using a Linux distribution which supports systemd and has apac
 6. Create the file `/etc/systemd/system/web-erre2.service.d/override.conf` with the following contents:
    ```ini
    [Service]
-   Environment="COOKIE_SECRET_KEY=qwerty"  # A random string of characters
-   Environment="TELEGRAM_BOT_TOKEN=1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"  # The token for the Telegram notifier bot, get one at https://t.me/BotFather
-   Environment="TARGET_CHAT_ID=-100XXXXXXXXXX"  # The Telegram chat id where the notifications should be sent, remember that the id of supergroups is prefixed by -100
+   # A random string of characters
+   Environment="COOKIE_SECRET_KEY=qwerty"
+   # The token for the Telegram notifier bot, get one at https://t.me/BotFather
+   Environment="TELEGRAM_BOT_TOKEN=1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+   # The Telegram chat id where the notifications should be sent, remember that the id of supergroups is prefixed by -100
+   Environment="TARGET_CHAT_ID=-100XXXXXXXXXX"  
    ```
    
 7. Reload all `systemd` daemon files:
