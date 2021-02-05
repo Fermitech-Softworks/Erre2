@@ -297,7 +297,7 @@ def page_add_riassunto():
     db.session.add(nuovocommit)
     db.session.commit()
     testo = "Il riassunto \"{}\" e' stato caricato su Erre2.\n<a href=\"{}\">Clicca qui per visitare Erre2.</a>".format(
-        nuovoriassunto.nome, url_for("page_filter_course", cid=nuovoriassunto.corso_id))
+        nuovoriassunto.nome, url_for("page_filter_course", cid=nuovoriassunto.corso_id, _external=True))
     param = {"chat_id": group_chat_id, "text": testo, "parse_mode": "html"}
     requests.get("https://api.telegram.org/bot" + telegram_token + "/sendMessage", params=param)
     return redirect(url_for('page_administration'))
@@ -327,7 +327,7 @@ def page_update_riassunto(sid):
     db.session.add(nuovocommit)
     db.session.commit()
     testo = "Il riassunto \"{}\" e' stato aggiornato.\nModifiche: {}\n<a href=\"{}\">Clicca qui per visitare Erre2.</a>".format(
-        riassunto.nome, nuovocommit.descrizione, url_for("page_filter_course", cid=riassunto.corso_id))
+        riassunto.nome, nuovocommit.descrizione, url_for("page_filter_course", cid=riassunto.corso_id, _external=True))
     param = {"chat_id": group_chat_id, "text": testo, "parse_mode": "html"}
     requests.get("https://api.telegram.org/bot" + telegram_token + "/sendMessage", params=param)
     return redirect(url_for('page_administration'))
