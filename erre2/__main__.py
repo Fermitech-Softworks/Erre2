@@ -13,7 +13,8 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.environ["COOKIE_SECRET_KEY"]
-app.config['UPLOAD_FOLDER'] = "./uploads"
+UPLOAD_FOLDER = pathlib.Path(".").joinpath("uploads").resolve()
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = set(['txt', 'md', 'pdf', 'doc', 'docx'])
 db = SQLAlchemy(app)
 telegram_token = os.environ["TELEGRAM_BOT_TOKEN"]
@@ -214,7 +215,7 @@ def page_inspect_riassunto(sid):
     db.session.commit()
 
     # Trova il percorso del file
-    path = pathlib.Path(app.config["UPLOAD_FOLDER"]).joinpath(riassunto.filename).absolute()
+    path = UPLOAD_FOLDER.joinpath(riassunto.filename).resolve()
     return send_file(path, as_attachment=True, attachment_filename=path.name)
 
 
@@ -288,7 +289,7 @@ def page_add_riassunto():
         return redirect(request.url)
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file.save(filename)
+        file.save(UPLOAD_FOLDER.joinpath(filename).resolve())
     nuovoriassunto = Summary(request.form.get("nome"), request.form.get("descrizione"), int(utente.aid),
                              int(request.form["listamaterie"]), file.filename)
     db.session.add(nuovoriassunto)
@@ -297,7 +298,7 @@ def page_add_riassunto():
     db.session.add(nuovocommit)
     db.session.commit()
     testo = "Il riassunto \"{}\" e' stato caricato su Erre2.\n<a href=\"{}\">Clicca qui per visitare Erre2.</a>".format(
-        nuovoriassunto.nome, url_for("page_filter_course", cid=nuovoriassunto.corso_id))
+        nuovoriassunto.nome, url_for("page_filter_course", cid=nuovoriassunto.corso_id, _external=True))
     param = {"chat_id": group_chat_id, "text": testo, "parse_mode": "html"}
     requests.get("https://api.telegram.org/bot" + telegram_token + "/sendMessage", params=param)
     return redirect(url_for('page_administration'))
@@ -321,13 +322,13 @@ def page_update_riassunto(sid):
         return redirect(request.url)
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        file.save(UPLOAD_FOLDER.joinpath(filename).resolve())
     riassunto.filename = file.filename
     nuovocommit = Commit(request.form.get('descrizione'), riassunto.sid)
     db.session.add(nuovocommit)
     db.session.commit()
     testo = "Il riassunto \"{}\" e' stato aggiornato.\nModifiche: {}\n<a href=\"{}\">Clicca qui per visitare Erre2.</a>".format(
-        riassunto.nome, nuovocommit.descrizione, url_for("page_filter_course", cid=riassunto.corso_id))
+        riassunto.nome, nuovocommit.descrizione, url_for("page_filter_course", cid=riassunto.corso_id, _external=True))
     param = {"chat_id": group_chat_id, "text": testo, "parse_mode": "html"}
     requests.get("https://api.telegram.org/bot" + telegram_token + "/sendMessage", params=param)
     return redirect(url_for('page_administration'))
@@ -341,7 +342,7 @@ def func_delete_riassunto(sid):
     for committ in commits:
         db.session.delete(committ)
     try:
-        os.remove(pathlib.Path(app.config["UPLOAD_FOLDER"]).joinpath(riassunto.filename))
+        os.remove(UPLOAD_FOLDER.joinpath(riassunto.filename).resolve())
     except FileNotFoundError:
         pass
     db.session.delete(riassunto)
@@ -359,7 +360,7 @@ def func_delete_materia(cid):
         for committ in commits:
             db.session.delete(committ)
         try:
-            os.remove(pathlib.Path(app.config["UPLOAD_FOLDER"]).joinpath(riassunto.filename))
+            os.remove(UPLOAD_FOLDER.joinpath(riassunto.filename).resolve())
         except FileNotFoundError:
             pass
         db.session.delete(riassunto)
@@ -383,7 +384,7 @@ def func_edit_account():
 
 if __name__ == "__main__":
     # Assicurati che la cartella ./uploads esista
-    os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+    os.makedirs(UPLOAD_FOLDER.resolve(), exist_ok=True)
 
     # Aggiungi sempre le tabelle non esistenti al database, senza cancellare quelle vecchie
     print("Ciao")
