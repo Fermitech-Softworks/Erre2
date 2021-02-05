@@ -30,6 +30,10 @@ If you need a full website translation, please open an issue. I will be more tha
    export TELEGRAM_BOT_TOKEN='1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
    # The Telegram chat id where the notifications should be sent, remember that the id of supergroups is prefixed by -100
    export TARGET_CHAT_ID='-100XXXXXXXXXX'
+   # The folder where files should be stored
+   export UPLOAD_FOLDER='/opt/erre2'
+   # The uri of the database to use
+   export SQLALCHEMY_DATABASE_URI='postgresql://erre2@/erre2'
    ```
    
 4. Run the `flask` development server:
@@ -81,11 +85,15 @@ _Assuming you are using a Linux distribution which supports systemd and has apac
    ```ini
    [Service]
    # A random string of characters
-   Environment="COOKIE_SECRET_KEY=qwerty"
+   Environment=COOKIE_SECRET_KEY=qwerty
    # The token for the Telegram notifier bot, get one at https://t.me/BotFather
-   Environment="TELEGRAM_BOT_TOKEN=1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+   Environment=TELEGRAM_BOT_TOKEN=1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
    # The Telegram chat id where the notifications should be sent, remember that the id of supergroups is prefixed by -100
-   Environment="TARGET_CHAT_ID=-100XXXXXXXXXX"  
+   Environment=TARGET_CHAT_ID=-100XXXXXXXXXX
+   # The folder where files should be stored
+   Environment=UPLOAD_FOLDER=/opt/erre2
+   # The uri of the database to use
+   Environment=SQLALCHEMY_DATABASE_URI=postgresql://erre2@/erre2
    ```
    
 7. Reload all `systemd` daemon files:
