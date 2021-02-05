@@ -10,10 +10,10 @@ import pathlib
 import werkzeug.middleware.proxy_fix
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ["SQLALCHEMY_DATABASE_URI"]
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.environ["COOKIE_SECRET_KEY"]
-UPLOAD_FOLDER = pathlib.Path(".").joinpath("uploads").resolve()
+UPLOAD_FOLDER = pathlib.Path(os.environ["UPLOAD_FOLDER"]).resolve()
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = set(['txt', 'md', 'pdf', 'doc', 'docx'])
 db = SQLAlchemy(app)
