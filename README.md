@@ -1,3 +1,6 @@
+# Warning!
+This project is no longer mainteined and updated. Please refer to the updated project by clicking on [this link](https://github.com/Fermitech-Softworks/Erre2.0).
+
 # 🇮🇹 Erre2: Raccoglitore (di) Riassunti
 Erre2 è un webserver scritto in python che si pone come obiettivo quello di creare una piattaforma gradevole da usare
 per l'universitario medio sulla quale è possibile caricare e aggiornare riassunti, piuttosto che ritrovarseli sparpagliati nel gruppo universitario. 
